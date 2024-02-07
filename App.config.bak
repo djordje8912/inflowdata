@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<configuration>
+	<appSettings>
+		<add key="api_weather"
+             value= "https://api.open-meteo.com/v1/forecast?timezone=auto&latitude=[latitude]&longitude=[longitude]&hourly=temperature_2m,relativehumidity_2m,windspeed_10m"/>
+	</appSettings>
+</configuration>

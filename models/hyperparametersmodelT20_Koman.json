@@ -1,0 +1,16 @@
+{
+    "prediction_window": 8,
+    "algorithm_type": 2,
+    "history_window": 96,
+    "n_epochs": "10000",
+    "input_size": "13",
+    "hidden_size": "20",
+    "num_layers": "1",
+    "learning_rate": "0.008",
+    "fully_connected_layer_neurons_number": "30",
+    "dropout": 0.25,
+    "dataset_name": "fulldataset1300",
+    "column_list": "['Koman_rain', 'Koman_temp', 'Koman_humi', 'Dragobi_rain', 'Dragobi_temp', 'Dragobi_humi', 'Theth_rain', 'Theth_temp', 'Theth_humi', 'Puke_temp', 'Puke_rain', 'Puke_humi', 'InflowsTributary']",
+    "train_test_rate": 90,
+    "predicted_value": "InflowsTributary"
+}

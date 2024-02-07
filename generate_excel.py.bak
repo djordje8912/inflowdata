@@ -1,0 +1,152 @@
+import xlsxwriter
+import random
+import pandas as pd
+from datetime import datetime
+from bs4 import BeautifulSoup
+df = pd.read_csv('AllDetails.csv')
+with open("InflowForecast.dll.config", "r") as file:
+    # Read each line in the file, readlines() returns a list of lines
+    content = file.readlines()
+    # Combine the lines in the list into a string
+    content = "".join(content)
+    #print(content)
+    bs_content = BeautifulSoup(content)
+    CSV_location=bs_content.find("add", {"key": "locationOfcsv"}).get('value')  
+    archive_excel=bs_content.find("add", {"key": "archive_excel"}).get('value')  
+    locationOfExcel=bs_content.find("add", {"key": "locationOfExcel"}).get('value')  
+    locationOfArchiveExcel=bs_content.find("add", {"key": "locationOfArchiveExcel"}).get('value')  
+
+
+# Example data
+# Try to do as much processing outside of initializing the workbook
+# Everything beetween Workbook() and close() gets trapped in an exception
+#random_data = [random.random() for _ in range(10)]
+Date=df["Date"]
+Inflows=df["Inflows"]
+InflowsTributary=df["InflowsTributary"]
+InflowsTributary2=df["InflowsTributary2"]
+
+Precipitation1=df["Fierze_rain"]
+Precipitation2=df["Koman_rain"]
+Precipitation3=df["VauDejes_rain"]
+offset_inflow=4
+offset_precipitation=0
+# Data location inside excel
+
+data_start_loc_precipitation = [1+offset_precipitation, 1]
+data_start_loc_precipitation1 = [2+offset_precipitation, 1]
+data_start_loc_precipitation2= [3+offset_precipitation, 1]
+
+data_start_loc_date = [0+offset_precipitation, 1] # xlsxwriter rquires list, no tuple
+data_start_loc_inflows = [1+offset_inflow, 1]
+data_start_loc_inflowstributary = [2+offset_inflow, 1]
+data_start_loc_inflowstributary2= [3+offset_inflow, 1]
+
+data_end_loc_precipitation = [1+offset_precipitation,data_start_loc_precipitation[0] + len(df.index)]
+data_end_loc_precipitation1 = [2+offset_precipitation,data_start_loc_precipitation1[0] + len(df.index)]
+data_end_loc_precipitation2 = [3+offset_precipitation,data_start_loc_precipitation2[0] + len(df.index)]
+
+
+data_end_loc_inflows = [1+offset_inflow,data_start_loc_inflows[0] + len(df.index)]
+data_end_loc_inflowstributary = [2+offset_inflow,data_start_loc_inflows[0] + len(df.index)]
+data_end_loc_inflowstributary2 = [3+offset_inflow,data_start_loc_inflows[0] + len(df.index)]
+workbook = xlsxwriter.Workbook(locationOfExcel)
+
+
+
+worksheet = workbook.add_worksheet()
+
+# A chart requires data to reference data inside excel
+worksheet.write(offset_precipitation, 0, "Date") 
+worksheet.write(offset_inflow+1, 0, "Inflows") 
+worksheet.write(offset_inflow+2, 0, "InflowsTributary") 
+worksheet.write(offset_inflow+3, 0, "InflowsTributary2") 
+
+worksheet.write(offset_precipitation+1, 0, "Fierze_rain") 
+worksheet.write(offset_precipitation+2, 0, "Koman_rain") 
+worksheet.write(offset_precipitation+3, 0, "VauDejes_rain") 
+
+
+worksheet.set_column(0, 0, 20) 
+
+worksheet.write_row(*data_start_loc_precipitation, data=Precipitation1)
+worksheet.write_row(*data_start_loc_precipitation1, data=Precipitation2)
+worksheet.write_row(*data_start_loc_precipitation2, data=Precipitation3)
+
+worksheet.write_row(*data_start_loc_date, data=Date)
+worksheet.write_row(*data_start_loc_inflows, data=Inflows)
+worksheet.write_row(*data_start_loc_inflowstributary, data=InflowsTributary)
+worksheet.write_row(*data_start_loc_inflowstributary2, data=InflowsTributary2)
+
+# Charts are independent of worksheets
+chart = workbook.add_chart({'type': 'line'})
+chart.set_y_axis({'name': 'inflow[m^3/s]'})
+chart.set_x_axis({'name': 'hours'})
+chart.set_title({'name': 'Inflows forecast'})
+# The chart needs to explicitly reference data
+chart.add_series({
+    'values': [worksheet.name] + data_start_loc_inflows + data_end_loc_inflows,  
+    'name': "Inflow Fierze",
+})
+chart.add_series({
+    'values': [worksheet.name] + data_start_loc_inflowstributary + data_end_loc_inflowstributary,  
+    'name': "Inflow Koman",
+})
+chart.add_series({
+    'values': [worksheet.name] + data_start_loc_inflowstributary2 + data_end_loc_inflowstributary2,  
+    'name': "Inflow Vau Dajes",
+})
+worksheet.insert_chart('B'+str(5+offset_inflow), chart, {'x_scale':2.7, 'y_scale': 1.5})
+
+
+# Charts are independent of worksheets
+chart2 = workbook.add_chart({'type': 'column'})
+chart2.set_y_axis({'name': 'precipitation[mm]'})
+chart2.set_x_axis({'name': 'hours'})
+chart2.set_title({'name': 'Precipitation forecast'})
+# The chart needs to explicitly reference data
+chart2.add_series({
+    'values': [worksheet.name] + data_start_loc_precipitation + data_end_loc_precipitation,  
+    'name': "Precipitation Fierze",
+})
+chart2.add_series({
+    'values': [worksheet.name] + data_start_loc_precipitation1 + data_end_loc_precipitation1,  
+    'name': "Precipitation Koman",
+})
+chart2.add_series({
+    'values': [worksheet.name] + data_start_loc_precipitation2 + data_end_loc_precipitation2,  
+    'name': "Precipitation Vau Dajes",
+})
+worksheet.insert_chart('B'+str(30+offset_inflow), chart2, {'x_scale':2.2, 'y_scale': 1.5})
+
+month_dry = pd.read_csv('measurments/dry_year.csv')
+month_wet = pd.read_csv('measurments/wet_year.csv')
+month_char = pd.read_csv('measurments/characteristic_year.csv')
+
+currentMonth = datetime.now().month
+month_dry = month_dry[month_dry['Datetime'].dt.month == currentMonth]
+month_wet = month_wet[month_wet['Datetime'].dt.month == currentMonth]
+month_char = month_char[month_char['Datetime'].dt.month == currentMonth]
+dry1=df["1_FierzaStorage"]
+wet1=df["1_FierzaStorage"]
+char1=df["1_FierzaStorage"]
+dry2=df["2_KomanStorage"]
+wet2=df["2_KomanStorage"]
+char2=df["2_KomanStorage"]
+dry3=df["3_VDejesStorage"]
+wet3=df["3_VDejesStorage"]
+char3=df["3_VDejesStorage"]
+
+workbook.close()
+if(archive_excel.lower()=='true'):
+    workbook = xlsxwriter.Workbook(locationOfArchiveExcel+"\\excel_"+datetime.now().strftime("%Y%m%d%H%M%S")+".xslx")
+    
+  # Write to file
+workbook.close()
+
+df = pd.read_csv('AllDetails.csv')
+cols_to_keep = ['Date', 'Inflows', 'InflowsTributary','InflowsTributary2']
+df=df[cols_to_keep]
+df = df.rename(columns={'Inflows': '1_FierzaStorage', 'InflowsTributary': '2_KomanStorage','Date': 'DATETIME', 'InflowsTributary2': '3_VDejesStorage'})
+# df['DATETIME'] = df['DATETIME'].dt.strftime('%Y/%m/%d %H:%M:%S')
+df.to_csv(CSV_location+"\\CSF_fajl.csv", index=False) 
