@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<configuration>
+	<appSettings>
+		<add key="api_weather"
+             value= "https://api.open-meteo.com/v1/forecast?timezone=auto&latitude=[latitude]&longitude=[longitude]&hourly=temperature_2m,relativehumidity_2m,windspeed_10m"/>
+		 <add key="Fierze_1D" value="20231005060846"/>
+		 <add key="Koman_1D" value="20231005004415"/>
+		 <add key="VauDejes_1D" value="20231005003851"/>
+	</appSettings>
+</configuration>
