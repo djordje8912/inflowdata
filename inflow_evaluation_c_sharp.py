@@ -409,8 +409,11 @@ def evaluation():
         if(algorithm_type==3):
             X[k] =X[k].iloc[64:]
             if(predicted_value=="Inflows"):
-                
-                X[k]=X[k].drop(columns=['Kukes_humi', 'Okshtun_humi','Fierze_humi'])
+                X[k]=pd.read_csv('input.csv',parse_dates=["Date"])
+                X[k]['dayofyear'] = X[k]['Date'].dt.dayofyear/366
+                X[k]['hour'] = X[k]['Date'].dt.hour/24
+                X[k]= pd.DataFrame(X[k], columns=["dayofyear","hour","Kukes_rain","Fierze_rain","Fierze_temp","Fierze_humi","Peshkopi_rain","Inflows"])
+                X[k].reset_index(drop=True)
             elif(predicted_value=="InflowsTributary"):
                 pass
             else:

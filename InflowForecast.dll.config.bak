@@ -6,17 +6,17 @@
   <add key="neo_temp" value="http://10.5.20.155:12321/NeoAPI/model/[model]/time-series?lat=[latitude]&amp;levelType=105&amp;levelValue=2&amp;lon=[longitude]&amp;params=[param]&amp;runTime=[date].000Z" />
   <add key="neo_humi" value="http://10.5.20.155:12321/NeoAPI/model/[model]/time-series?lat=[latitude]&amp;levelType=105&amp;levelValue=2&amp;lon=[longitude]&amp;params=[param]&amp;runTime=[date].000Z" />
   <add key="neo_rain" value="http://10.5.20.155:12321/NeoAPI/model/[model]/time-series?lat=[latitude]&amp;levelType=1&amp;levelValue=0&amp;lon=[longitude]&amp;params=[param]&amp;runTime=[date].000Z" />
-  <add key="Fierze_1D" value="modelT21_Fierze" />
+  <add key="Fierze_1D" value="20240208231908" />
   <add key="theme" value="DarkSlateGray" />
   <add key="Koman_1D" value="modelT20_Koman" />
   <add key="VauDejes_1D" value="modelT20_VauDejes" />
-  <add key="Fierze_6D" value="modelT21_Fierze" />
+  <add key="Fierze_6D" value="modelT22_Fierze" />
   <add key="Koman_6D" value="modelT20_Koman" />
   <add key="VauDejes_6D" value="modelT20_VauDejes" />
-  <add key="Fierze_3D" value="modelT21_Fierze" />
+  <add key="Fierze_3D" value="modelT22_Fierze" />
   <add key="Koman_3D" value="modelT20_Koman" />
   <add key="VauDejes_3D" value="modelT20_VauDejes" />
-  <add key="Fierze_14D" value="modelT21_Fierze" />
+  <add key="Fierze_14D" value="modelT22_Fierze" />
   <add key="Koman_14D" value="modelT20_Koman" />
   <add key="VauDejes_14D" value="modelT20_VauDejes" />
   <add key="VauDejes_N" value="42.002771" />
@@ -42,20 +42,22 @@
   <add key="post_method" value="False" />
   <add key="previous_time_forecast" value="False" />
   <add key="previous_time_excel" value="false" />
-  <add key="archive_forecast" value="False" />
-  <add key="archive_excel" value="True" />
+  <add key="archive_forecast" value="True" />
+  <add key="archive_excel" value="False" />
   <add key="open_excel" value="True" />
+  <add key="open_pdf" value="True" />
   <add key="python_dll" value="C:\Users\hal9000\AppData\Local\Programs\Python\Python311\python311.dll" />
   <add key="locationOfInflows" value=".\measurments\inflows.csv" />
   <add key="locationOfExcel" value=".\excel_test.xlsx" />
+  <add key="locationOfPDF" value="C:\Users\hal9000\Desktop\" />
   <add key="locationOfModels" value=".\models" />
   <add key="locationOfArchiveCsvPrediction" value=".\Archive\prediction\" />
   <add key="locationOfArchiveExcel" value=".\Archive\excel\" />
   <add key="locationOfcsv" value="C:\Users\hal9000\Desktop\plexos.csv" />
-  <add key="adm" value="8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918" />
-  <add key="usr" value="8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918" />
+  <add key="adm" value="9174188826bdf11176cb34f527545a67316d41d4316bcdf9f4ef2e274e1cb996" />
+  <add key="usr" value="9174188826bdf11176cb34f527545a67316d41d4316bcdf9f4ef2e274e1cb996" />
   <add key="resolution" value="60" />
-  <add key="days_range" value="14" />
+  <add key="days_range" value="6" />
   <add key="model1_name" value="GFS" />
   <add key="model1_value" value="8" />
   <add key="model2_name" value="ESMWF" />
@@ -67,5 +69,13 @@
   <add key="neo_rain_param" value="59" />
   <add key="api_type" value="1" />
   <add key="neo_perc_scale" value="3600" />
+  <add key="inflow_alert" value="200" />
+  <add key="inflow_warning" value="500" />
+  <add key="rain_alert" value="20" />
+  <add key="rain_warning" value="50" />
+  <add key="startOfPrediction" value="2024-02-07T14:00" />
+  <add key="lock_dock" value="true" />
+  <add key="pan1" value="0.2" />
+  <add key="pan2" value="0.5" />
  </appSettings>
 </configuration>
