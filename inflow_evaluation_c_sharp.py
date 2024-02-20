@@ -5,6 +5,7 @@ import numpy as np
 import torch 
 from torch import nn
 from bs4 import BeautifulSoup
+from scipy.signal import savgol_filter
 #from torch.autograd import Variable
 #from torch.utils.data import DataLoader
 #from torch.utils.data.dataset import Dataset
@@ -25,6 +26,14 @@ device ='cpu'
 USE_CUDA=False
 
 print(torch.__version__)
+def interpolate(a,abc):
+    n=[]
+    for i in range(len(a)-1):
+        n.append(a[i])
+        for j in range(1,abc):
+            n.append(a[i]+(a[i+1]-a[i])/8*j)
+    return n
+
 
 
 class LSTM3(nn.Module):
@@ -88,7 +97,8 @@ class LSTM3(nn.Module):
         #print("izlaz {0} ".format(out.shape))
         #out=out.reshape(-1,1)
         #print(out,x2)
-        out=out.squeeze().unsqueeze(2)
+        
+        out=out.unsqueeze(2)
         #print(out.shape,x2.shape)
         out=torch.cat((x2, out),2)  #.swapaxes(1,2)
         a,b,c =out.shape
@@ -330,6 +340,7 @@ def evaluation():
     k14=bs_content.find("add", {"key": "Koman_14D"}).get('value')
     v14=bs_content.find("add", {"key": "VauDejes_14D"}).get('value')
     f14=bs_content.find("add", {"key": "Fierze_14D"}).get('value')
+    startOfPrediction=datetime.strptime(bs_content.find("add", {"key": "startOfPrediction"}).get('value'),'%Y-%m-%dT%H:%M')
     locationOfArchiveCsvPrediction=bs_content.find("add", {"key": "locationOfArchiveCsvPrediction"}).get('value')
     archive_forecast=bs_content.find("add", {"key": "archive_forecast"}).get('value')
     # previous_time_forecast=bool(bs_content.find("add", {"key": "previous_time_forecast"}).get('value'))
@@ -407,16 +418,38 @@ def evaluation():
         model_name = 'models/model_'+json_name[k]+'.pth'
         
         if(algorithm_type==3):
-            X[k] =X[k].iloc[64:]
+            abc=int((dataset_name.split('_'))[1].split('h')[0])
+            X[k] =X[k].iloc[96-history_window*abc:]
             if(predicted_value=="Inflows"):
                 X[k]=pd.read_csv('input.csv',parse_dates=["Date"])
                 X[k]['dayofyear'] = X[k]['Date'].dt.dayofyear/366
                 X[k]['hour'] = X[k]['Date'].dt.hour/24
                 X[k]= pd.DataFrame(X[k], columns=["dayofyear","hour","Kukes_rain","Fierze_rain","Fierze_temp","Fierze_humi","Peshkopi_rain","Inflows"])
                 X[k].reset_index(drop=True)
+                X[k]['Fierze_rain'] =  X[k]['Fierze_rain'].shift(48)
+                X[k]['Kukes_rain'] =  X[k]['Kukes_rain'].shift(48)
+                X[k]['Peshkopi_rain'] =  X[k]['Peshkopi_rain'].shift(48)
+                X[k] = X[k].dropna()
+                X[k]=X[k].groupby(np.arange(len(X[k]))//abc).mean()
             elif(predicted_value=="InflowsTributary"):
-                pass
+                X[k]=pd.read_csv('input.csv',parse_dates=["Date"])
+                X[k]['dayofyear'] = X[k]['Date'].dt.dayofyear/366
+                X[k]['hour'] = X[k]['Date'].dt.hour/24
+                X[k]= pd.DataFrame(X[k], columns=["dayofyear","hour","Koman_rain","Koman_temp","Koman_humi","Puke_rain","InflowsTributary"])  
+                X[k].reset_index(drop=True)
+                X[k]['Fierze_rain'] =  X[k]['Koman_rain'].shift(48)
+                X[k]['Kukes_rain'] =  X[k]['Puke_rain'].shift(48)
+                X[k] = X[k].dropna()
+                X[k]=X[k].groupby(np.arange(len(X[k]))//abc).mean()
             else:
+                X[k]=pd.read_csv('input.csv',parse_dates=["Date"])
+                X[k]['dayofyear'] = X[k]['Date'].dt.dayofyear/366
+                X[k]['hour'] = X[k]['Date'].dt.hour/24
+                X[k]= df2= pd.DataFrame(X[k], columns=["dayofyear","hour","VauDejes_rain","VauDejes_temp","VauDejes_humi","InflowsTributary2"])  
+                X[k].reset_index(drop=True)
+                X[k]['Fierze_rain'] =  X[k]['VauDejes_rain'].shift(48)
+                X[k] = X[k].dropna()
+                X[k]=X[k].groupby(np.arange(len(X[k]))//abc).mean()
                 pass
             lstm = LSTM3(prediction_window, 
                             input_size, 
@@ -441,18 +474,19 @@ def evaluation():
             #print(eval_set)
 
             input_arr=X[k].to_numpy()
-
+            print(input_arr)
 
             #print(input_arr)
-
+            
       
             #print("range"+str(len(input_arr)-96))
-            for i in range(int((len(input_arr)-32)/prediction_window)):
-                inp=input_arr[i*prediction_window:i*prediction_window+32,:]
-
-                inp2=input_arr[i*prediction_window+32:(i+1)*prediction_window+32,:]
+            for i in range(int((len(input_arr)-history_window)/prediction_window)):
+                inp=input_arr[i*prediction_window:i*prediction_window+history_window,:]
+                print(inp[-1,-1],inp[-1,2])
+                inp2=input_arr[i*prediction_window+history_window:(i+1)*prediction_window+history_window,:]
                 
                 df_X_ss = ss.transform(inp)
+                print(inp)
                 f_X_ss = ss.transform(inp2)
                 f_X_ss=f_X_ss[:,0:input_arr.shape[1]-1]
                 data_predict =one_step_forecast3(lstm,df_X_ss,f_X_ss)
@@ -462,9 +496,15 @@ def evaluation():
                 #print(len(predict))
                 for j in range(len(predict)):
 
-                    input_arr[i*prediction_window+32+j][len(input_arr[0])-1]=predict[j]
-                    df.loc[32+i*prediction_window+j,predicted_value] = predict[j]
-        if(algorithm_type==2):
+                    input_arr[i*prediction_window+history_window+j][len(input_arr[0])-1]=predict[j]
+                arr=interpolate(predict.reshape(-1),abc)
+                if(abc==1):
+                    for k in range(len(predict)):
+                        df.loc[history_window+i*prediction_window*abc+k,predicted_value] = predict[k]
+                else:
+                    for k in range(len(arr)):
+                        df.loc[history_window+i*prediction_window*abc+k,predicted_value] = arr[k]
+        elif(algorithm_type==2):
             lstm = LSTM2(prediction_window, 
                             input_size, 
                             hidden_size, 
@@ -642,7 +682,11 @@ def evaluation():
        #  df['Date']=pd.to_datetime(df['Date'], infer_datetime_format='%Y-%m-%d 12:00:00')
     # df['Date']=pd.to_datetime(df['Date'], infer_datetime_format='%d/%m/%Y %H:%M:%S')
 
-
+    if(resolution=='60'):
+        a= savgol_filter(df['Inflows'].values, 7, 1)
+        df['Inflows']=pd.Series(a)
+        pass
+       
 
     df.to_csv("AllDetails.csv", index=False) 
    

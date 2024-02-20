@@ -1,0 +1,16 @@
+{
+    "prediction_window": 8,
+    "algorithm_type": 2,
+    "history_window": 32,
+    "n_epochs": "450",
+    "input_size": "10",
+    "hidden_size": "10",
+    "num_layers": "2",
+    "learning_rate": "0.002",
+    "fully_connected_layer_neurons_number": "10",
+    "dropout": 0.1,
+    "dataset_name": "fulldataset1301",
+    "column_list": "['VauDejes_rain', 'VauDejes_temp', 'VauDejes_humi', 'Koman_rain', 'Koman_temp', 'Koman_humi', 'Puke_temp', 'Puke_rain', 'Puke_humi', 'InflowsTributary2']",
+    "train_test_rate": 90,
+    "predicted_value": "InflowsTributary2"
+}

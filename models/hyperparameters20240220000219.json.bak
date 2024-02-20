@@ -1,0 +1,16 @@
+{
+    "prediction_window": 9,
+    "algorithm_type": 3,
+    "history_window": 6,
+    "n_epochs": "500",
+    "input_size": "8",
+    "hidden_size": "5",
+    "num_layers": "2",
+    "learning_rate": "0.005",
+    "fully_connected_layer_neurons_number": "5",
+    "dropout": 0.1,
+    "dataset_name": "fulldataset1801_processed1_8h",
+    "column_list": "['dayofyear', 'hour', 'Kukes_rain', 'Fierze_rain', 'Fierze_temp', 'Fierze_humi', 'Peshkopi_rain', 'Inflows']",
+    "train_test_rate": 90,
+    "predicted_value": "Inflows"
+}
