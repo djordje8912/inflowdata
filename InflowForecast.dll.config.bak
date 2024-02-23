@@ -6,14 +6,14 @@
   <add key="neo_temp" value="http://10.5.20.155:12321/NeoAPI/model/[model]/time-series?lat=[latitude]&amp;levelType=105&amp;levelValue=2&amp;lon=[longitude]&amp;params=[param]&amp;runTime=[date].000Z" />
   <add key="neo_humi" value="http://10.5.20.155:12321/NeoAPI/model/[model]/time-series?lat=[latitude]&amp;levelType=105&amp;levelValue=2&amp;lon=[longitude]&amp;params=[param]&amp;runTime=[date].000Z" />
   <add key="neo_rain" value="http://10.5.20.155:12321/NeoAPI/model/[model]/time-series?lat=[latitude]&amp;levelType=1&amp;levelValue=0&amp;lon=[longitude]&amp;params=[param]&amp;runTime=[date].000Z" />
-  <add key="Fierze_1D" value="20240208231908" />
+  <add key="Fierze_1D" value="modelT22_Fierze" />
   <add key="theme" value="DarkSlateGray" />
   <add key="Koman_1D" value="modelT20_Koman" />
   <add key="VauDejes_1D" value="modelT20_VauDejes" />
   <add key="Fierze_6D" value="modelT22_Fierze" />
   <add key="Koman_6D" value="modelT20_Koman" />
   <add key="VauDejes_6D" value="modelT20_VauDejes" />
-  <add key="Fierze_3D" value="modelT22_Fierze" />
+  <add key="Fierze_3D" value="Fierza_1h_24_24" />
   <add key="Koman_3D" value="modelT20_Koman" />
   <add key="VauDejes_3D" value="modelT20_VauDejes" />
   <add key="Fierze_14D" value="modelT22_Fierze" />
@@ -73,8 +73,10 @@
   <add key="inflow_warning" value="500" />
   <add key="rain_alert" value="20" />
   <add key="rain_warning" value="50" />
-  <add key="startOfPrediction" value="2024-02-07T14:00" />
+  <add key="startOfPrediction" value="2024-02-23T06:00" />
   <add key="lock_dock" value="true" />
+  <add key="end_inflow_time" value="6" />
+  <add key="inflow_without_datetime" value="True" />
   <add key="pan1" value="0.2" />
   <add key="pan2" value="0.5" />
  </appSettings>
