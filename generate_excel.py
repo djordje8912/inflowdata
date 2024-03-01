@@ -27,10 +27,12 @@ with open("InflowForecast.dll.config", "r") as file:
 
 df['Date'] = pd.to_datetime(df['Date'])
 datetimeStartOfPrediction = datetime.strptime(startOfPrediction, '%Y-%m-%dT%H:%M')
-if(resolution=="1440"):
-    df=df[df['Date'] >= datetimeStartOfPrediction.date()] 
-else:
-    df=df[df['Date'] >= datetimeStartOfPrediction]
+#if(resolution=="1440"):
+#    df=df[df['Date'] >= datetimeStartOfPrediction.date()] 
+#else:
+print(df.shape)
+df=df[df['Date'] >= datetimeStartOfPrediction]
+print(df.shape)
 # Example data
 # Try to do as much processing outside of initializing the workbook
 # Everything beetween Workbook() and close() gets trapped in an exception
@@ -78,7 +80,7 @@ data_start_loc_humidity2= [2,9]
 data_end_loc_humidity2 = [data_start_loc_humidity2[0] + len(df.index),9]
 
 data_start_loc_date = [2,0] # xlsxwriter rquires list, no tuple
-
+data_end_loc_date_forecast = [2+ len(df.index),0]
 
 data_start_loc_inflows = [2,1]
 data_start_loc_inflowstributary = [2,2]
@@ -217,14 +219,17 @@ chart2.set_title({'name': 'Forecast for precipitation '})
 # The chart needs to explicitly reference data
 chart2.add_series({
     'values': [worksheet.name] + data_start_loc_precipitation + data_end_loc_precipitation,  
+    'categories':[worksheet.name] + data_start_loc_date + data_end_loc_date_forecast,  
     'name': "Precipitation Fierze",
 })
 chart2.add_series({
     'values': [worksheet.name] + data_start_loc_precipitation1 + data_end_loc_precipitation1,  
+    'categories':[worksheet.name] + data_start_loc_date + data_end_loc_date_forecast,  
     'name': "Precipitation Koman",
 })
 chart2.add_series({
     'values': [worksheet.name] + data_start_loc_precipitation2 + data_end_loc_precipitation2,  
+    'categories':[worksheet.name] + data_start_loc_date + data_end_loc_date_forecast,  
     'name': "Precipitation Vau Dajes",
 })
 worksheet.insert_chart('L'+str(2), chart2, {'x_scale':2.2, 'y_scale': 1.5})
@@ -237,14 +242,17 @@ chart2.set_title({'name': ' Forecast for temperature'})
 # The chart needs to explicitly reference data
 chart2.add_series({
     'values': [worksheet.name] + data_start_loc_temperature + data_end_loc_temperature,  
+    'categories':[worksheet.name] + data_start_loc_date + data_end_loc_date_forecast,  
     'name': "Temperature Fierze",
 })
 chart2.add_series({
     'values': [worksheet.name] + data_start_loc_temperature1 + data_end_loc_temperature1,  
+    'categories':[worksheet.name] + data_start_loc_date + data_end_loc_date_forecast,  
     'name': "Temperature Koman",
 })
 chart2.add_series({
     'values': [worksheet.name] + data_start_loc_temperature2 + data_end_loc_temperature2,  
+    'categories':[worksheet.name] + data_start_loc_date + data_end_loc_date_forecast,  
     'name': "Temperature Vau Dajes",
 })
 worksheet.insert_chart('L'+str(27), chart2, {'x_scale':2.2, 'y_scale': 1.5})
@@ -257,14 +265,17 @@ chart2.set_title({'name': ' Forecast for humidity'})
 # The chart needs to explicitly reference data
 chart2.add_series({
     'values': [worksheet.name] + data_start_loc_humidity + data_end_loc_humidity,  
+    'categories':[worksheet.name] + data_start_loc_date + data_end_loc_date_forecast,  
     'name': "Humidity Fierze",
 })
 chart2.add_series({
     'values': [worksheet.name] + data_start_loc_humidity1 + data_end_loc_humidity1,  
+    'categories':[worksheet.name] + data_start_loc_date + data_end_loc_date_forecast,  
     'name': "Humidity Koman",
 })
 chart2.add_series({
     'values': [worksheet.name] + data_start_loc_humidity2 + data_end_loc_humidity2,  
+    'categories':[worksheet.name] + data_start_loc_date + data_end_loc_date_forecast,  
     'name': "Humidity Vau Dajes",
 })
 worksheet.insert_chart('L'+str(53), chart2, {'x_scale':2.2, 'y_scale': 1.5})
@@ -298,6 +309,8 @@ worksheet.write_column(*data_start_loc_inflows, data=Inflows)
 worksheet.write_column(*data_start_loc_inflowstributary, data=InflowsTributary)
 worksheet.write_column(*data_start_loc_inflowstributary2, data=InflowsTributary2) 
 
+
+
 # Charts are independent of worksheets
 chart = workbook.add_chart({'type': 'line'})
 chart.set_y_axis({'name': 'Inflow[m^3/s]'})
@@ -306,14 +319,17 @@ chart.set_title({'name': 'Inflows forecast'})
 # The chart needs to explicitly reference data
 chart.add_series({
     'values': [worksheet.name] + data_start_loc_inflows + data_end_loc_inflows,  
+    'categories':[worksheet.name] + data_start_loc_date + data_end_loc_date_forecast,  
     'name': "Inflow Fierze",
 })
 chart.add_series({
     'values': [worksheet.name] + data_start_loc_inflowstributary + data_end_loc_inflowstributary,  
+    'categories':[worksheet.name] + data_start_loc_date + data_end_loc_date_forecast,  
     'name': "Inflow Koman",
 })
 chart.add_series({
     'values': [worksheet.name] + data_start_loc_inflowstributary2 + data_end_loc_inflowstributary2,  
+    'categories':[worksheet.name] + data_start_loc_date + data_end_loc_date_forecast,  
     'name': "Inflow Vau Dajes",
 })
 worksheet.insert_chart('F'+str(5), chart, {'x_scale':2.7, 'y_scale': 1.5})
@@ -329,14 +345,21 @@ month_char = pd.read_csv('measurments/characteristic_year.csv')
 
 
 currentMonth = datetime.now().month
+currentYear = datetime.now().year
+currentDay=  datetime.now().timetuple().tm_yday
 month_dry['Datetime'] =  pd.to_datetime(month_dry['Datetime'], errors='coerce', dayfirst=True)
 month_wet['Datetime'] =  pd.to_datetime(month_wet['Datetime'],errors='coerce', dayfirst=True)
 month_char['Datetime'] =  pd.to_datetime(month_char['Datetime'],errors='coerce', dayfirst=True)
-month_dry = month_dry[month_dry['Datetime'].dt.month == currentMonth]
-month_wet = month_wet[month_wet['Datetime'].dt.month == currentMonth]
-month_char = month_char[month_char['Datetime'].dt.month == currentMonth]
+#month_dry = month_dry[month_dry['Datetime'].dt.month == currentMonth]
+#month_wet = month_wet[month_wet['Datetime'].dt.month == currentMonth]
+#month_char = month_char[month_char['Datetime'].dt.month == currentMonth]
+month_dry = month_dry.loc[(month_dry['Datetime'].dt.day_of_year > currentDay) & (month_dry['Datetime'].dt.day_of_year < currentDay+30)]
+month_wet = month_wet.loc[(month_wet['Datetime'].dt.day_of_year > currentDay) & (month_wet['Datetime'].dt.day_of_year < currentDay+30)]
+month_char = month_char.loc[(month_char['Datetime'].dt.day_of_year > currentDay) & (month_char['Datetime'].dt.day_of_year < currentDay+30)]
 month_dry=month_dry.reset_index()
-date=month_dry.index+1
+#date=month_dry.index+1
+#date=month_dry['Datetime']+ np.timedelta64(2,'Y') 
+date = month_dry['Datetime'].dt.strftime('%d.%m.'+str(currentYear) +' %H:%M')
 
 dry1=month_dry["1_FierzaStorage"]
 wet1=month_wet["1_FierzaStorage"]
@@ -349,7 +372,9 @@ wet3=month_wet["3_VDejesStorage"]
 char3=month_char["3_VDejesStorage"]
 worksheet = workbook.add_worksheet("Historical statistics")
 
-
+formatdict = {'num_format':'mm/dd/yyyy'}
+fmt = workbook.add_format(formatdict)
+worksheet.set_column('A:A', None, fmt)
 
 
 data_start_loc_date = [2,0] # xlsxwriter rquires list, no tuple
@@ -362,6 +387,7 @@ data_start_loc_w2= [ 2,6]
 data_start_loc_a3 =[ 2,7]
 data_start_loc_d3 =[ 2,8]
 data_start_loc_w3= [ 2,9]
+data_end_loc_date = [2+ len(month_dry.index),0]
 data_end_loc_a1 = [2+ len(month_dry.index),1]
 data_end_loc_d1 = [2+ len(month_dry.index),2]
 data_end_loc_w1 = [ 2+len(month_dry.index),3]
@@ -414,14 +440,17 @@ chart.set_title({'name': 'Fierze current month statistics'})
 # The chart needs to explicitly reference data
 chart.add_series({
     'values': [worksheet.name] + data_start_loc_d1 + data_end_loc_d1,  
+    'categories':[worksheet.name] + data_start_loc_date + data_end_loc_date,  
     'name': " Fierze dry",
 })
 chart.add_series({
     'values': [worksheet.name] + data_start_loc_w1 + data_end_loc_w1,  
+    'categories':[worksheet.name] + data_start_loc_date + data_end_loc_date,  
     'name': "Fierze wet",
 })
 chart.add_series({
     'values': [worksheet.name] + data_start_loc_a1 + data_end_loc_a1,  
+    'categories':[worksheet.name] + data_start_loc_date + data_end_loc_date,  
     'name': "Fierze characteristic",
 })
 worksheet.insert_chart('M'+str(2), chart, {'x_scale':2.7, 'y_scale': 1.5})
@@ -436,14 +465,17 @@ chart.set_title({'name': 'Koman current month statistics'})
 # The chart needs to explicitly reference data
 chart.add_series({
     'values': [worksheet.name] + data_start_loc_d2 + data_end_loc_d2,  
+    'categories':[worksheet.name] + data_start_loc_date + data_end_loc_date,  
     'name': " Koman dry",
 })
 chart.add_series({
     'values': [worksheet.name] + data_start_loc_w2 + data_end_loc_w2,  
+    'categories':[worksheet.name] + data_start_loc_date + data_end_loc_date,  
     'name': "Koman wet",
 })
 chart.add_series({
     'values': [worksheet.name] + data_start_loc_a2 + data_end_loc_a2,  
+    'categories':[worksheet.name] + data_start_loc_date + data_end_loc_date,  
     'name': "Koman characteristic",
 })
 worksheet.insert_chart('M'+str(27), chart, {'x_scale':2.7, 'y_scale': 1.5})
@@ -457,14 +489,17 @@ chart.set_title({'name': 'VauDejes current month statistics'})
 # The chart needs to explicitly reference data
 chart.add_series({
     'values': [worksheet.name] + data_start_loc_d3 + data_end_loc_d3,  
+    'categories':[worksheet.name] + data_start_loc_date + data_end_loc_date,  
     'name': " VauDejes dry",
 })
 chart.add_series({
     'values': [worksheet.name] + data_start_loc_w3 + data_end_loc_w3,  
+    'categories':[worksheet.name] + data_start_loc_date + data_end_loc_date,  
     'name': "VauDejes wet",
 })
 chart.add_series({
     'values': [worksheet.name] + data_start_loc_a3 + data_end_loc_a3,  
+    'categories':[worksheet.name] + data_start_loc_date + data_end_loc_date,  
     'name': "VauDejes characteristic",
 })
 worksheet.insert_chart('M'+str(52), chart, {'x_scale':2.7, 'y_scale': 1.5})
@@ -477,11 +512,15 @@ if(archive_excel.lower()=='true'):
 workbook.close()
 
 df = pd.read_csv('AllDetails.csv')
+df['Date'] = pd.to_datetime(df['Date'])
+
+df=df[df['Date'] >= datetimeStartOfPrediction]
+df['Date'] = df['Date'].dt.strftime('%d.%m.%Y %H:%M')
 cols_to_keep = ['Date', 'Inflows', 'InflowsTributary','InflowsTributary2']
 df=df[cols_to_keep]
 df = df.rename(columns={'Inflows': '1_FierzaStorage', 'InflowsTributary': '2_KomanStorage','Date': 'DATETIME', 'InflowsTributary2': '3_VDejesStorage'})
 # df['DATETIME'] = df['DATETIME'].dt.strftime('%Y/%m/%d %H:%M:%S')
-df=df.iloc[96:]
+#df=df.iloc[96:]
 df.to_csv(CSV_location, index=False) 
 
 if(openExcel.lower()=='true'):

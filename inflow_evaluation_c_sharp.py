@@ -419,6 +419,7 @@ def evaluation():
         
         if(algorithm_type==3):
             abc=int((dataset_name.split('_'))[1].split('h')[0])
+            offset=96-history_window*abc
             X[k] =X[k].iloc[96-history_window*abc:]
             if(predicted_value=="Inflows"):
                 X[k]=pd.read_csv('input.csv',parse_dates=["Date"])
@@ -429,18 +430,22 @@ def evaluation():
                 X[k]['Fierze_rain'] =  X[k]['Fierze_rain'].shift(48)
                 X[k]['Kukes_rain'] =  X[k]['Kukes_rain'].shift(48)
                 X[k]['Peshkopi_rain'] =  X[k]['Peshkopi_rain'].shift(48)
-                X[k] = X[k].dropna()
+                
                 X[k]=X[k].groupby(np.arange(len(X[k]))//abc).mean()
+                X[k] = X[k].dropna()
             elif(predicted_value=="InflowsTributary"):
                 X[k]=pd.read_csv('input.csv',parse_dates=["Date"])
                 X[k]['dayofyear'] = X[k]['Date'].dt.dayofyear/366
                 X[k]['hour'] = X[k]['Date'].dt.hour/24
-                X[k]= pd.DataFrame(X[k], columns=["dayofyear","hour","Koman_rain","Koman_temp","Koman_humi","Puke_rain","InflowsTributary"])  
+                #X[k]= pd.DataFrame(X[k], columns=["dayofyear","hour","Koman_rain","Koman_temp","Koman_humi","Puke_rain","InflowsTributary"])  
+                X[k]= pd.DataFrame(X[k], columns=["dayofyear","hour","Koman_rain","Koman_temp","Koman_humi","Puke_rain","Fierze_rain","InflowsTributary"])  
                 X[k].reset_index(drop=True)
-                X[k]['Fierze_rain'] =  X[k]['Koman_rain'].shift(48)
-                X[k]['Kukes_rain'] =  X[k]['Puke_rain'].shift(48)
-                X[k] = X[k].dropna()
+                #X[k]['Fierze_rain'] =  X[k]['Koman_rain'].shift(48)
+                #X[k]['Kukes_rain'] =  X[k]['Puke_rain'].shift(48)
+                
                 X[k]=X[k].groupby(np.arange(len(X[k]))//abc).mean()
+                X[k] = X[k].dropna()
+                
             else:
                 X[k]=pd.read_csv('input.csv',parse_dates=["Date"])
                 X[k]['dayofyear'] = X[k]['Date'].dt.dayofyear/366
@@ -448,8 +453,9 @@ def evaluation():
                 X[k]= df2= pd.DataFrame(X[k], columns=["dayofyear","hour","VauDejes_rain","VauDejes_temp","VauDejes_humi","InflowsTributary2"])  
                 X[k].reset_index(drop=True)
                 X[k]['Fierze_rain'] =  X[k]['VauDejes_rain'].shift(48)
-                X[k] = X[k].dropna()
+                
                 X[k]=X[k].groupby(np.arange(len(X[k]))//abc).mean()
+                X[k] = X[k].dropna()
                 pass
             lstm = LSTM3(prediction_window, 
                             input_size, 
@@ -474,6 +480,7 @@ def evaluation():
             #print(eval_set)
 
             input_arr=X[k].to_numpy()
+            
             print(input_arr)
 
             #print(input_arr)
@@ -499,11 +506,13 @@ def evaluation():
                     input_arr[i*prediction_window+history_window+j][len(input_arr[0])-1]=predict[j]
                 arr=interpolate(predict.reshape(-1),abc)
                 if(abc==1):
-                    for k in range(len(predict)):
-                        df.loc[history_window+i*prediction_window*abc+k,predicted_value] = predict[k]
+                    for mk in range(len(predict)):
+                        #df.loc[history_window+i*prediction_window*abc+k,predicted_value] = predict[k]
+                        df.loc[96+i*prediction_window*abc+mk,predicted_value] = predict[mk]
                 else:
-                    for k in range(len(arr)):
-                        df.loc[history_window+i*prediction_window*abc+k,predicted_value] = arr[k]
+                    for mk in range(len(arr)):
+                        #print(prediction_window)
+                        df.loc[96+i*(prediction_window-1)*abc+mk,predicted_value] = arr[mk]
         elif(algorithm_type==2):
             lstm = LSTM2(prediction_window, 
                             input_size, 
