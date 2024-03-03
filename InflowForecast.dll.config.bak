@@ -6,19 +6,19 @@
   <add key="neo_temp" value="http://10.5.20.155:12321/NeoAPI/model/[model]/time-series?lat=[latitude]&amp;levelType=105&amp;levelValue=2&amp;lon=[longitude]&amp;params=[param]&amp;runTime=[date].000Z" />
   <add key="neo_humi" value="http://10.5.20.155:12321/NeoAPI/model/[model]/time-series?lat=[latitude]&amp;levelType=105&amp;levelValue=2&amp;lon=[longitude]&amp;params=[param]&amp;runTime=[date].000Z" />
   <add key="neo_rain" value="http://10.5.20.155:12321/NeoAPI/model/[model]/time-series?lat=[latitude]&amp;levelType=1&amp;levelValue=0&amp;lon=[longitude]&amp;params=[param]&amp;runTime=[date].000Z" />
-  <add key="Fierze_1D" value="modelT22_Fierze" />
+  <add key="Fierze_1D" value="Fierza_A" />
   <add key="theme" value="DarkSlateGray" />
-  <add key="Koman_1D" value="modelT20_Koman" />
-  <add key="VauDejes_1D" value="modelT20_VauDejes" />
-  <add key="Fierze_6D" value="modelT22_Fierze" />
-  <add key="Koman_6D" value="modelT20_Koman" />
-  <add key="VauDejes_6D" value="modelT20_VauDejes" />
-  <add key="Fierze_3D" value="Fierza_1h_24_24" />
-  <add key="Koman_3D" value="modelT20_Koman" />
-  <add key="VauDejes_3D" value="modelT20_VauDejes" />
-  <add key="Fierze_14D" value="modelT22_Fierze" />
-  <add key="Koman_14D" value="modelT20_Koman" />
-  <add key="VauDejes_14D" value="modelT20_VauDejes" />
+  <add key="Koman_1D" value="Koman_A" />
+  <add key="VauDejes_1D" value="VauDejes_A" />
+  <add key="Fierze_6D" value="Fierza_A" />
+  <add key="Koman_6D" value="Koman_A" />
+  <add key="VauDejes_6D" value="VauDejes_A" />
+  <add key="Fierze_3D" value="Fierza_A" />
+  <add key="Koman_3D" value="Koman_A" />
+  <add key="VauDejes_3D" value="VauDejes_A" />
+  <add key="Fierze_14D" value="Fierza_A" />
+  <add key="Koman_14D" value="Koman_A" />
+  <add key="VauDejes_14D" value="VauDejes_A" />
   <add key="VauDejes_N" value="42.002771" />
   <add key="VauDejes_E" value="19.654438" />
   <add key="Koman_N" value="42.095577" />
@@ -56,7 +56,7 @@
   <add key="locationOfcsv" value="C:\Users\hal9000\Desktop\plexos.csv" />
   <add key="adm" value="9174188826bdf11176cb34f527545a67316d41d4316bcdf9f4ef2e274e1cb996" />
   <add key="usr" value="9174188826bdf11176cb34f527545a67316d41d4316bcdf9f4ef2e274e1cb996" />
-  <add key="resolution" value="60" />
+  <add key="resolution" value="1440" />
   <add key="days_range" value="6" />
   <add key="model1_name" value="GFS" />
   <add key="model1_value" value="8" />
@@ -73,11 +73,15 @@
   <add key="inflow_warning" value="500" />
   <add key="rain_alert" value="20" />
   <add key="rain_warning" value="50" />
-  <add key="startOfPrediction" value="2024-02-23T06:00" />
+  <add key="startOfPrediction" value="2024-03-01T13:00" />
   <add key="lock_dock" value="true" />
-  <add key="end_inflow_time" value="6" />
+  <add key="end_inflow_time" value="13" />
   <add key="inflow_without_datetime" value="True" />
   <add key="pan1" value="0.2" />
   <add key="pan2" value="0.5" />
+  <add key="useInflowFilter" value="True" />
+  <add key="InflowFilterWidth" value="3" />
+  <add key="debug_mode" value="Fapse" />
+  <add key="temp_offset" value="0" />
  </appSettings>
 </configuration>
