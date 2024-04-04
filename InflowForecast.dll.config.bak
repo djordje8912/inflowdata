@@ -61,23 +61,23 @@
   <add key="model1_name" value="GFS" />
   <add key="model1_value" value="8" />
   <add key="model2_name" value="DWD" />
-  <add key="model2_value" value="gfs" />
+  <add key="model2_value" value="dwd-icon" />
   <add key="model3_name" value="NOAA" />
-  <add key="model3_value" value="dwd-icon" />
+  <add key="model3_value" value="gfs" />
   <add key="model4_name" value="ECMWF" />
   <add key="model4_value" value="ecmwf" />
   <add key="neo_temp_param" value="11" />
   <add key="neo_humi_param" value="52" />
   <add key="neo_rain_param" value="59" />
-  <add key="api_type" value="3" />
+  <add key="api_type" value="2" />
   <add key="neo_perc_scale" value="3600" />
   <add key="inflow_alert" value="200" />
   <add key="inflow_warning" value="500" />
   <add key="rain_alert" value="20" />
   <add key="rain_warning" value="50" />
-  <add key="startOfPrediction" value="2024-03-01T13:00" />
+  <add key="startOfPrediction" value="2024-04-04T14:00" />
   <add key="lock_dock" value="true" />
-  <add key="end_inflow_time" value="13" />
+  <add key="end_inflow_time" value="14" />
   <add key="inflow_without_datetime" value="True" />
   <add key="pan1" value="0.2" />
   <add key="pan2" value="0.5" />
